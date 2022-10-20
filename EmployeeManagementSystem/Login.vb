@@ -1,4 +1,5 @@
 ﻿Imports System.Data.SqlClient
+Imports System.Windows.Forms.Design
 
 Public Class Login
     Dim Conn As New SqlConnection("Data Source=(localdb)\ProjectsV13;Initial Catalog=EmployeeVbDb;Integrated Security=True")
@@ -8,7 +9,13 @@ Public Class Login
     End Sub
 
     Private Sub ButtonLogin_Click(sender As Object, e As EventArgs) Handles ButtonLogin.Click
-        Dim cmd As New SqlCommand("Select * From UserPW where id=" & TextBoxUserId.Text & " AND password=" & TextBoxPassword.Text & "", Conn)
+        Dim userId As String = TextBoxUserId.Text
+        Dim userPw As String = TextBoxPassword.Text
+        Dim sqlquerry As String = "Select * From UserPW where id= @userId AND password= @userPw"
+        Dim cmd As New SqlCommand(sqlquerry, Conn)
+        cmd.Parameters.Add("@userId", SqlDbType.VarChar, 50).Value = userId
+        cmd.Parameters.Add("@userPw", SqlDbType.VarChar, 50).Value = userPw
+
         If TextBoxUserId.Text = "" Then
             MessageBox.Show("Enter the User ID")
             Return
@@ -32,7 +39,13 @@ Public Class Login
             End If
             Conn.Close()
         Catch ex As Exception
-            MessageBox.Show("Unable to Conect the Server")
+            MessageBox.Show(ex.ToString())
+            Conn.Close()
+        Finally
+            If Conn IsNot Nothing Then
+                Conn.Dispose()
+            End If
         End Try
+
     End Sub
 End Class

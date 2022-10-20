@@ -2,13 +2,17 @@
 
 Public Class Details
     Dim Conn As New SqlConnection("Data Source=(localdb)\ProjectsV13;Initial Catalog=EmployeeVbDb;Integrated Security=True")
+    'Fetch the Employee Data from Database
     Private Sub FetchEmployeeData()
         If TextBoxEmployeeID.Text = "" Then
             MessageBox.Show("Enter the Employee ID")
         Else
             Conn.Open()
             Dim cmd As New SqlCommand("Select * From Employees where EmployeeID=" & TextBoxEmployeeID.Text & "", Conn)
+
+            'initialize a DataTable instance
             Dim dt As DataTable = New DataTable
+
             Dim sda As SqlDataAdapter = New SqlDataAdapter(cmd)
             sda.Fill(dt)
             For Each dr As DataRow In dt.Rows
